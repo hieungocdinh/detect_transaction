@@ -1,0 +1,1 @@
+This is a project to practice and improve  my skills in OOP + Java Core + Java Spring Boot and React JS
