@@ -3,8 +3,10 @@ package com.hieudinh.detecttransaction.service;
 import com.hieudinh.detecttransaction.common.BaseResponse;
 import com.hieudinh.detecttransaction.dto.CreateTransactionRequestDTO;
 import com.hieudinh.detecttransaction.dto.TransactionResponseDTO;
+import com.hieudinh.detecttransaction.dto.UpdateTransactionRequestDTO;
 import com.hieudinh.detecttransaction.entity.Transaction;
 import com.hieudinh.detecttransaction.exception.NotFoundException;
+import com.hieudinh.detecttransaction.mapper.TransactionMapper;
 import com.hieudinh.detecttransaction.repository.TransactionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -18,12 +20,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class TransactionServiceImpl implements TransactionService{
     private final TransactionRepository transactionRepository;
+    private final TransactionMapper transactionMapper;
 
     public BaseResponse<List<TransactionResponseDTO>> getListTransaction(){
         List<Transaction> transactions = transactionRepository.findAll();
         List<TransactionResponseDTO> response = new ArrayList<>();
         for(Transaction  transaction : transactions){
-            response.add(new TransactionResponseDTO(transaction));
+            response.add(transactionMapper.toDTO(transaction));
         }
          return BaseResponse.success(response);
     }
@@ -33,18 +36,24 @@ public class TransactionServiceImpl implements TransactionService{
         if(transaction.isEmpty()){
             throw new NotFoundException("Transaction with id not found");
         }
-        return BaseResponse.success(new TransactionResponseDTO(transaction.get()));
+        return BaseResponse.success(transactionMapper.toDTO(transaction.get()));
     }
 
     public BaseResponse<TransactionResponseDTO> createTransaction(CreateTransactionRequestDTO request){
-        Transaction transaction = new Transaction();
-        transaction.setTitle(request.getTitle());
-        transaction.setAmount(request.getAmount());
-        transaction.setCategory(request.getCategory());
-        transaction.setDate(request.getDate());
+        Transaction transaction = transactionMapper.toEntity(request);
         transactionRepository.save(transaction);
+        return BaseResponse.success(transactionMapper.toDTO(transaction));
+    }
 
-        return BaseResponse.success(new TransactionResponseDTO(transaction));
+    public BaseResponse<TransactionResponseDTO> updateTransaction(UUID transactionId, UpdateTransactionRequestDTO request){
+        Optional<Transaction> opTransaction = transactionRepository.findById(transactionId);
+        if(opTransaction.isEmpty()){
+            throw new NotFoundException("Transaction with id not found");
+        }
+        Transaction transaction = opTransaction.get();
+        transactionMapper.updateTransactionFromDTO(request, transaction);
+        transactionRepository.save(transaction);
+        return BaseResponse.success(transactionMapper.toDTO(transaction));
     }
 
     public void deleteTransaction(UUID id){

@@ -3,6 +3,7 @@ package com.hieudinh.detecttransaction.controller;
 import com.hieudinh.detecttransaction.common.BaseResponse;
 import com.hieudinh.detecttransaction.dto.CreateTransactionRequestDTO;
 import com.hieudinh.detecttransaction.dto.TransactionResponseDTO;
+import com.hieudinh.detecttransaction.dto.UpdateTransactionRequestDTO;
 import com.hieudinh.detecttransaction.service.TransactionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -31,8 +32,13 @@ public class TransactionController {
         return transactionService.createTransaction(request);
     }
 
+    @PutMapping("/{transaction-id}")
+    public BaseResponse<TransactionResponseDTO> update(@PathVariable("transaction-id") UUID transactionId, @RequestBody UpdateTransactionRequestDTO request){
+        return transactionService.updateTransaction(transactionId, request);
+    }
+
     @DeleteMapping("/{transaction-id}")
-    public void delete(@PathVariable UUID transactionId){
+    public void delete(@PathVariable("transaction-id") UUID transactionId){
         transactionService.deleteTransaction(transactionId);
     }
 }
