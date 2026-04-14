@@ -5,6 +5,7 @@ import com.hieudinh.detecttransaction.dto.CreateTransactionRequestDTO;
 import com.hieudinh.detecttransaction.dto.TransactionResponseDTO;
 import com.hieudinh.detecttransaction.dto.UpdateTransactionRequestDTO;
 import com.hieudinh.detecttransaction.service.TransactionService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,12 +29,12 @@ public class TransactionController {
     }
 
     @PostMapping("")
-    public BaseResponse<TransactionResponseDTO> create(@RequestBody CreateTransactionRequestDTO request){
+    public BaseResponse<TransactionResponseDTO> create(@Valid @RequestBody CreateTransactionRequestDTO request){
         return transactionService.createTransaction(request);
     }
 
     @PutMapping("/{transaction-id}")
-    public BaseResponse<TransactionResponseDTO> update(@PathVariable("transaction-id") UUID transactionId, @RequestBody UpdateTransactionRequestDTO request){
+    public BaseResponse<TransactionResponseDTO> update(@PathVariable("transaction-id") UUID transactionId,@Valid @RequestBody UpdateTransactionRequestDTO request){
         return transactionService.updateTransaction(transactionId, request);
     }
 

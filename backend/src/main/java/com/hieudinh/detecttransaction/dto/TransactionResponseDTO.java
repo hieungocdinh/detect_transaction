@@ -1,6 +1,5 @@
 package com.hieudinh.detecttransaction.dto;
 
-import com.hieudinh.detecttransaction.entity.Transaction;
 import com.hieudinh.detecttransaction.enums.TransactionCategory;
 import lombok.Getter;
 import lombok.Setter;
